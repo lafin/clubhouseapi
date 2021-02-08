@@ -12,8 +12,8 @@ import (
 var url = "https://www.clubhouseapi.com/api"
 var headers = map[string]string{
 	"Content-Type": "application/json",
-	"User-Agent":   "clubhouse/269 (iPhone; iOS 14.1; Scale/3.00)",
-	"CH-AppBuild":  "269",
+	"User-Agent":   "Clubhouse/292 CFNetwork/1220.1 Darwin/20.3.0",
+	"CH-AppBuild":  "292",
 }
 
 // StartPhoneNumberAuth is a method of logging in by phone
@@ -62,7 +62,6 @@ func RefreshToken(refreshToken string) (RefreshTokenResponse, error) {
 	if err != nil {
 		return data, err
 	}
-	fmt.Println(string(response))
 	if err := json.Unmarshal(response, &data); err != nil {
 		return data, err
 	}

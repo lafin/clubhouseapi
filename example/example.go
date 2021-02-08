@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 	"github.com/lafin/clubhouseapi"
@@ -31,6 +32,11 @@ func auth(phoneNumber, verificationCode string) {
 	fmt.Println("AccessToken", response.AccessToken)
 	fmt.Println("RefreshToken", response.RefreshToken)
 	fmt.Println("UserID", response.UserProfile.UserID)
+	env, _ := godotenv.Read()
+	env["ACCESS_TOKEN"] = response.AccessToken
+	env["REFRESH_TOKEN"] = response.RefreshToken
+	env["USER_ID"] = strconv.Itoa(response.UserProfile.UserID)
+	_ = godotenv.Write(env, ".env")
 }
 
 func channels(userID, accessToken string) {
@@ -42,15 +48,22 @@ func channels(userID, accessToken string) {
 	response, err := clubhouseapi.GetChannels()
 	if err != nil {
 		fmt.Println(err.Error())
+		refresh()
 		return
 	}
 	if !response.Success {
 		return
 	}
-	fmt.Println(response)
+	for _, channel := range response.Channels {
+		fmt.Println(channel.ChannelID, channel.Channel, channel.Topic, channel.Club.Name)
+	}
+	for _, event := range response.Events {
+		fmt.Println(event.EventID, event.Name, event.Description, event.Club.Name)
+	}
 }
 
-func refresh(refreshToken string) {
+func refresh() {
+	refreshToken := os.Getenv("REFRESH_TOKEN")
 	response, err := clubhouseapi.RefreshToken(refreshToken)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -58,6 +71,10 @@ func refresh(refreshToken string) {
 	}
 	fmt.Println("AccessToken", response.Access)
 	fmt.Println("RefreshToken", response.Refresh)
+	env, _ := godotenv.Read()
+	env["ACCESS_TOKEN"] = response.Access
+	env["REFRESH_TOKEN"] = response.Refresh
+	_ = godotenv.Write(env, ".env")
 }
 
 func main() {
@@ -66,9 +83,6 @@ func main() {
 	// login(phoneNumber)
 	// verificationCode := "1234"
 	// auth(phoneNumber, verificationCode)
-
-	// refreshToken := os.Getenv("REFRESH_TOKEN")
-	// refresh(refreshToken)
 
 	userID := os.Getenv("USER_ID")
 	accessToken := os.Getenv("ACCESS_TOKEN")
