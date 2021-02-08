@@ -2,13 +2,15 @@ package clubhouseapi
 
 import "time"
 
-type startPhoneNumberAuthResponse struct {
+// StartPhoneNumberAuthResponse is the response structure of the StartPhoneNumberAuth method
+type StartPhoneNumberAuthResponse struct {
 	Success      bool   `json:"success"`
 	IsBlocked    bool   `json:"is_blocked"`
 	ErrorMessage []byte `json:"error_message"`
 }
 
-type completePhoneNumberAuthResponse struct {
+// CompletePhoneNumberAuthResponse is the response structure of the CompletePhoneNumberAuth method
+type CompletePhoneNumberAuthResponse struct {
 	Success                   bool `json:"success"`
 	IsVerified                bool `json:"is_verified"`
 	NumberOfAttemptsRemaining int  `json:"number_of_attempts_remaining"`
@@ -25,7 +27,8 @@ type completePhoneNumberAuthResponse struct {
 	IsOnboarding bool   `json:"is_onboarding"`
 }
 
-type getChannelsResponse struct {
+// GetChannelsResponse is the response structure of the GetChannels method
+type GetChannelsResponse struct {
 	Channels []struct {
 		CreatorUserProfileID int    `json:"creator_user_profile_id"`
 		ChannelID            int    `json:"channel_id"`
