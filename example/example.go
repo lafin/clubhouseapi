@@ -50,12 +50,25 @@ func channels(userID, accessToken string) {
 	fmt.Println(response)
 }
 
+func refresh(refreshToken string) {
+	response, err := clubhouseapi.RefreshToken(refreshToken)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	fmt.Println("AccessToken", response.Access)
+	fmt.Println("RefreshToken", response.Refresh)
+}
+
 func main() {
 	_ = godotenv.Load()
 	// phoneNumber := os.Getenv("PHONE_NUMBER")
 	// login(phoneNumber)
 	// verificationCode := "1234"
 	// auth(phoneNumber, verificationCode)
+
+	// refreshToken := os.Getenv("REFRESH_TOKEN")
+	// refresh(refreshToken)
 
 	userID := os.Getenv("USER_ID")
 	accessToken := os.Getenv("ACCESS_TOKEN")

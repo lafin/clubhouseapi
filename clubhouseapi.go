@@ -55,6 +55,20 @@ func GetChannels() (GetChannelsResponse, error) {
 	return data, nil
 }
 
+// RefreshToken is a method for getting a new access token
+func RefreshToken(refreshToken string) (RefreshTokenResponse, error) {
+	var data RefreshTokenResponse
+	response, err := http.Post(fmt.Sprintf("%s/refresh_token", url), strings.NewReader(fmt.Sprintf(`{"refresh":"%s"}`, refreshToken)), headers)
+	if err != nil {
+		return data, err
+	}
+	fmt.Println(string(response))
+	if err := json.Unmarshal(response, &data); err != nil {
+		return data, err
+	}
+	return data, nil
+}
+
 // AddCredentials is a method of adding credentials such as User ID or Access Token
 func AddCredentials(credentials map[string]string) {
 	for k, v := range credentials {

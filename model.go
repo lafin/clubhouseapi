@@ -104,3 +104,9 @@ type GetChannelsResponse struct {
 	} `json:"events"`
 	Success bool `json:"success"`
 }
+
+// RefreshTokenResponse is the response structure of the RefreshToken method
+type RefreshTokenResponse struct {
+	Access  string `json:"access"`
+	Refresh string `json:"refresh"`
+}
