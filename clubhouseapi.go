@@ -45,7 +45,7 @@ func CompletePhoneNumberAuth(phoneNumber, verificationCode string) (CompletePhon
 // GetChannels is a method of getting all channels
 func GetChannels() (GetChannelsResponse, error) {
 	var data GetChannelsResponse
-	response, err := http.Post(fmt.Sprintf("%s/get_channels", url), strings.NewReader("{}"), headers)
+	response, err := http.Get(fmt.Sprintf("%s/get_channels", url), headers)
 	if err != nil {
 		return data, err
 	}
