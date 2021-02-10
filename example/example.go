@@ -10,10 +10,11 @@ import (
 	"github.com/lafin/clubhouseapi"
 )
 
-func login(phoneNumber string) {
+func login() {
+	phoneNumber := os.Getenv("PHONE_NUMBER")
 	response, err := clubhouseapi.StartPhoneNumberAuth(phoneNumber)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("login", err.Error())
 		return
 	}
 	if !response.Success {
@@ -21,18 +22,16 @@ func login(phoneNumber string) {
 	}
 }
 
-func auth(phoneNumber, verificationCode string) {
+func auth(verificationCode string) {
+	phoneNumber := os.Getenv("PHONE_NUMBER")
 	response, err := clubhouseapi.CompletePhoneNumberAuth(phoneNumber, verificationCode)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("auth", err.Error())
 		return
 	}
 	if !response.Success {
 		return
 	}
-	fmt.Println("AccessToken", response.AccessToken)
-	fmt.Println("RefreshToken", response.RefreshToken)
-	fmt.Println("UserID", response.UserProfile.UserID)
 	env, _ := godotenv.Read()
 	env["ACCESS_TOKEN"] = response.AccessToken
 	env["REFRESH_TOKEN"] = response.RefreshToken
@@ -40,30 +39,24 @@ func auth(phoneNumber, verificationCode string) {
 	_ = godotenv.Write(env, ".env")
 }
 
-func channels(userID, accessToken string) clubhouseapi.GetChannelsResponse {
+func channels() (clubhouseapi.GetChannelsResponse, error) {
+	userID := os.Getenv("USER_ID")
+	accessToken := os.Getenv("ACCESS_TOKEN")
 	var credentials = map[string]string{
 		"CH-UserID":     userID,
 		"Authorization": fmt.Sprintf(`Bearer %s`, accessToken),
 	}
 	clubhouseapi.AddCredentials(credentials)
-	response, err := clubhouseapi.GetChannels()
-	if err != nil {
-		fmt.Println(err.Error())
-		refresh()
-		return response
-	}
-	return response
+	return clubhouseapi.GetChannels()
 }
 
 func refresh() {
 	refreshToken := os.Getenv("REFRESH_TOKEN")
 	response, err := clubhouseapi.RefreshToken(refreshToken)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("refresh", err.Error())
 		return
 	}
-	fmt.Println("AccessToken", response.Access)
-	fmt.Println("RefreshToken", response.Refresh)
 	env, _ := godotenv.Read()
 	env["ACCESS_TOKEN"] = response.Access
 	env["REFRESH_TOKEN"] = response.Refresh
@@ -79,34 +72,59 @@ func userIsAlreadyInChannel(channel clubhouseapi.Channel, userID int) bool {
 	return false
 }
 
+func autoRefresh() {
+	ticker := time.NewTicker(60 * time.Second)
+	quit := make(chan struct{})
+	for {
+		select {
+		case <-ticker.C:
+			refresh()
+			fmt.Print("@")
+			_ = godotenv.Overload()
+		case <-quit:
+			ticker.Stop()
+			return
+		}
+	}
+}
+
 func main() {
 	_ = godotenv.Load()
-	// phoneNumber := os.Getenv("PHONE_NUMBER")
-	// login(phoneNumber)
-	// verificationCode := "1234"
-	// auth(phoneNumber, verificationCode)
+	refresh()
+	go autoRefresh()
 
-	userID := os.Getenv("USER_ID")
-	accessToken := os.Getenv("ACCESS_TOKEN")
-	response := channels(userID, accessToken)
-	for _, channel := range response.Channels {
-		fmt.Println(channel.ChannelID, channel.Channel, channel.Topic, channel.Club.Name, channel.NumAll, channel.NumSpeakers)
-		parsedUserID, _ := strconv.ParseInt(userID, 10, 32)
-		if !userIsAlreadyInChannel(channel, int(parsedUserID)) {
-			fmt.Println("join to channel", channel.Channel)
-			_, err := clubhouseapi.JoinChannel(channel.Channel)
-			if err != nil {
-				fmt.Println(err.Error())
-				return
-			}
-		} else {
-			fmt.Println("ping channel", channel.Channel)
-			_, err := clubhouseapi.ActivePing(channel.Channel)
-			if err != nil {
-				fmt.Println(err.Error())
-				return
-			}
+	// login()
+	// auth("1234")
+
+	for {
+		response, err := channels()
+		if err != nil {
+			fmt.Println("channels", err.Error())
+			time.Sleep(10 * time.Second)
+			continue
 		}
-		time.Sleep(2 * time.Second)
+		for _, channel := range response.Channels {
+			fmt.Println(channel.ChannelID, channel.Channel, channel.Topic, channel.Club.Name, channel.NumAll, channel.NumSpeakers)
+		}
+		for _, channel := range response.Channels {
+			userID, _ := strconv.ParseInt(os.Getenv("USER_ID"), 10, 32)
+			if !userIsAlreadyInChannel(channel, int(userID)) {
+				_, err := clubhouseapi.JoinChannel(channel.Channel)
+				if err != nil {
+					fmt.Println("join", err.Error())
+					break
+				}
+				fmt.Print("+")
+			} else {
+				_, err := clubhouseapi.ActivePing(channel.Channel)
+				if err != nil {
+					fmt.Println("ping", err.Error())
+					break
+				}
+				fmt.Print(".")
+			}
+			time.Sleep(2 * time.Second)
+		}
+		time.Sleep(10 * time.Second)
 	}
 }
