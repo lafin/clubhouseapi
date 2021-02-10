@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/lafin/clubhouseapi"
@@ -39,7 +40,7 @@ func auth(phoneNumber, verificationCode string) {
 	_ = godotenv.Write(env, ".env")
 }
 
-func channels(userID, accessToken string) {
+func channels(userID, accessToken string) clubhouseapi.GetChannelsResponse {
 	var credentials = map[string]string{
 		"CH-UserID":     userID,
 		"Authorization": fmt.Sprintf(`Bearer %s`, accessToken),
@@ -49,17 +50,9 @@ func channels(userID, accessToken string) {
 	if err != nil {
 		fmt.Println(err.Error())
 		refresh()
-		return
+		return response
 	}
-	if !response.Success {
-		return
-	}
-	for _, channel := range response.Channels {
-		fmt.Println(channel.ChannelID, channel.Channel, channel.Topic, channel.Club.Name)
-	}
-	for _, event := range response.Events {
-		fmt.Println(event.EventID, event.Name, event.Description, event.Club.Name)
-	}
+	return response
 }
 
 func refresh() {
@@ -77,6 +70,15 @@ func refresh() {
 	_ = godotenv.Write(env, ".env")
 }
 
+func userIsAlreadyInChannel(channel clubhouseapi.Channel, userID int) bool {
+	for _, user := range channel.Users {
+		if user.UserID == userID {
+			return true
+		}
+	}
+	return false
+}
+
 func main() {
 	_ = godotenv.Load()
 	// phoneNumber := os.Getenv("PHONE_NUMBER")
@@ -86,5 +88,25 @@ func main() {
 
 	userID := os.Getenv("USER_ID")
 	accessToken := os.Getenv("ACCESS_TOKEN")
-	channels(userID, accessToken)
+	response := channels(userID, accessToken)
+	for _, channel := range response.Channels {
+		fmt.Println(channel.ChannelID, channel.Channel, channel.Topic, channel.Club.Name, channel.NumAll, channel.NumSpeakers)
+		parsedUserID, _ := strconv.ParseInt(userID, 10, 32)
+		if !userIsAlreadyInChannel(channel, int(parsedUserID)) {
+			fmt.Println("join to channel", channel.Channel)
+			_, err := clubhouseapi.JoinChannel(channel.Channel)
+			if err != nil {
+				fmt.Println(err.Error())
+				return
+			}
+		} else {
+			fmt.Println("ping channel", channel.Channel)
+			_, err := clubhouseapi.ActivePing(channel.Channel)
+			if err != nil {
+				fmt.Println(err.Error())
+				return
+			}
+		}
+		time.Sleep(2 * time.Second)
+	}
 }

@@ -55,6 +55,32 @@ func GetChannels() (GetChannelsResponse, error) {
 	return data, nil
 }
 
+// JoinChannel is a method to join a channel
+func JoinChannel(channel string) (JoinChannelResponse, error) {
+	var data JoinChannelResponse
+	response, err := http.Post(fmt.Sprintf("%s/join_channel", url), strings.NewReader(fmt.Sprintf(`{"channel":"%s"}`, channel)), headers)
+	if err != nil {
+		return data, err
+	}
+	if err := json.Unmarshal(response, &data); err != nil {
+		return data, err
+	}
+	return data, nil
+}
+
+// ActivePing is a method to ping
+func ActivePing(channel string) (ActivePingResponse, error) {
+	var data ActivePingResponse
+	response, err := http.Post(fmt.Sprintf("%s/active_ping", url), strings.NewReader(fmt.Sprintf(`{"channel":"%s"}`, channel)), headers)
+	if err != nil {
+		return data, err
+	}
+	if err := json.Unmarshal(response, &data); err != nil {
+		return data, err
+	}
+	return data, nil
+}
+
 // RefreshToken is a method for getting a new access token
 func RefreshToken(refreshToken string) (RefreshTokenResponse, error) {
 	var data RefreshTokenResponse
