@@ -11,9 +11,19 @@ import (
 
 var url = "https://www.clubhouseapi.com/api"
 var headers = map[string]string{
-	"Content-Type": "application/json",
-	"User-Agent":   "Clubhouse/292 CFNetwork/1220.1 Darwin/20.3.0",
-	"CH-AppBuild":  "292",
+	"Connection":      "keep-alive",
+	"Content-Type":    "application/json",
+	"Host":            "www.clubhouseapi.com",
+	"Accept":          "application/json",
+	"Accept-Encoding": "gzip, deflate, br",
+	"Accept-Language": "en-US;q=1",
+	"User-Agent":      "clubhouse/304 (iPhone; iOS 14.4; Scale/2.00)",
+	"CH-Languages":    "en-US",
+	"CH-Locale":       "en_US",
+	"CH-AppVersion":   "0.1.28",
+	"CH-AppBuild":     "304",
+	"CH-DeviceId":     "(null)",
+	"CH-UserID":       "(null)",
 }
 
 // StartPhoneNumberAuth is a method of logging in by phone
