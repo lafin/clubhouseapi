@@ -15,7 +15,6 @@ var headers = map[string]string{
 	"Content-Type":    "application/json",
 	"Host":            "www.clubhouseapi.com",
 	"Accept":          "application/json",
-	"Accept-Encoding": "gzip, deflate, br",
 	"Accept-Language": "en-US;q=1",
 	"User-Agent":      "clubhouse/304 (iPhone; iOS 14.4; Scale/2.00)",
 	"CH-Languages":    "en-US",
