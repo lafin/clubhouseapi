@@ -174,6 +174,11 @@ type JoinChannelResponse struct {
 	AgoraNativeMute         bool        `json:"agora_native_mute"`
 }
 
+// LeaveChannelResponse is the response structure of the LeaveChannel method
+type LeaveChannelResponse struct {
+	Success bool `json:"success"`
+}
+
 // ActivePingResponse is the response structure of the ActivePing method
 type ActivePingResponse struct {
 	ShouldLeave bool `json:"should_leave"`

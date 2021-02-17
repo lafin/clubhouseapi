@@ -77,6 +77,19 @@ func JoinChannel(channel string) (JoinChannelResponse, error) {
 	return data, nil
 }
 
+// LeaveChannel is a method to leave a channel
+func LeaveChannel(channel string) (LeaveChannelResponse, error) {
+	var data LeaveChannelResponse
+	response, err := http.Post(fmt.Sprintf("%s/leave_channel", url), strings.NewReader(fmt.Sprintf(`{"channel":"%s"}`, channel)), headers)
+	if err != nil {
+		return data, err
+	}
+	if err := json.Unmarshal(response, &data); err != nil {
+		return data, err
+	}
+	return data, nil
+}
+
 // ActivePing is a method to ping
 func ActivePing(channel string) (ActivePingResponse, error) {
 	var data ActivePingResponse
