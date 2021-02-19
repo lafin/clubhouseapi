@@ -6,7 +6,7 @@ import "time"
 type StartPhoneNumberAuthResponse struct {
 	Success      bool   `json:"success"`
 	IsBlocked    bool   `json:"is_blocked"`
-	ErrorMessage []byte `json:"error_message"`
+	ErrorMessage string `json:"error_message"`
 }
 
 // CompletePhoneNumberAuthResponse is the response structure of the CompletePhoneNumberAuth method
@@ -183,4 +183,107 @@ type LeaveChannelResponse struct {
 type ActivePingResponse struct {
 	ShouldLeave bool `json:"should_leave"`
 	Success     bool `json:"success"`
+}
+
+// FollowResponse is the response structure of the Follow method
+type FollowResponse struct {
+	Success      bool   `json:"success"`
+	ErrorMessage string `json:"error_message"`
+}
+
+// UnfollowResponse is the response structure of the Unfollow method
+type UnfollowResponse struct {
+	Success      bool   `json:"success"`
+	ErrorMessage string `json:"error_message"`
+}
+
+// AudienceReplyResponse is the response structure of the AudienceReply method
+type AudienceReplyResponse struct {
+	Success      bool   `json:"success"`
+	ErrorMessage string `json:"error_message"`
+}
+
+// FollowingResponse is the response structure of the Following method
+type FollowingResponse struct {
+	Users []struct {
+		UserID   int         `json:"user_id"`
+		Name     string      `json:"name"`
+		PhotoURL string      `json:"photo_url"`
+		Username string      `json:"username"`
+		Bio      string      `json:"bio"`
+		Twitter  interface{} `json:"twitter"`
+	} `json:"users"`
+	Clubs []struct {
+		ClubID              int    `json:"club_id"`
+		Name                string `json:"name"`
+		Description         string `json:"description"`
+		PhotoURL            string `json:"photo_url"`
+		NumMembers          int    `json:"num_members"`
+		NumFollowers        int    `json:"num_followers"`
+		EnablePrivate       bool   `json:"enable_private"`
+		IsFollowAllowed     bool   `json:"is_follow_allowed"`
+		IsMembershipPrivate bool   `json:"is_membership_private"`
+		IsCommunity         bool   `json:"is_community"`
+		Rules               []struct {
+			Desc  string `json:"desc"`
+			Title string `json:"title"`
+		} `json:"rules"`
+		NumOnline int `json:"num_online"`
+	} `json:"clubs"`
+	Count    int         `json:"count"`
+	Next     interface{} `json:"next"`
+	Previous interface{} `json:"previous"`
+	Success  bool        `json:"success"`
+}
+
+// FollowerResponse is the response structure of the Follower method
+type FollowerResponse struct {
+	Users []struct {
+		UserID            int         `json:"user_id"`
+		Name              string      `json:"name"`
+		PhotoURL          string      `json:"photo_url"`
+		Username          string      `json:"username"`
+		LastActiveMinutes int         `json:"last_active_minutes"`
+		Bio               interface{} `json:"bio"`
+		Twitter           interface{} `json:"twitter"`
+	} `json:"users"`
+	Count    int         `json:"count"`
+	Next     interface{} `json:"next"`
+	Previous interface{} `json:"previous"`
+	Success  bool        `json:"success"`
+}
+
+// GetProfileResponse is the response structure of the GetProfile method
+type GetProfileResponse struct {
+	UserProfile struct {
+		UserID             int         `json:"user_id"`
+		Name               string      `json:"name"`
+		Displayname        interface{} `json:"displayname"`
+		PhotoURL           string      `json:"photo_url"`
+		Username           string      `json:"username"`
+		Bio                string      `json:"bio"`
+		Twitter            interface{} `json:"twitter"`
+		Instagram          string      `json:"instagram"`
+		NumFollowers       int         `json:"num_followers"`
+		NumFollowing       int         `json:"num_following"`
+		TimeCreated        time.Time   `json:"time_created"`
+		FollowsMe          bool        `json:"follows_me"`
+		IsBlockedByNetwork bool        `json:"is_blocked_by_network"`
+		MutualFollowsCount int         `json:"mutual_follows_count"`
+		MutualFollows      []struct {
+			UserID   int    `json:"user_id"`
+			Name     string `json:"name"`
+			PhotoURL string `json:"photo_url"`
+			Username string `json:"username"`
+		} `json:"mutual_follows"`
+		NotificationType     interface{} `json:"notification_type"`
+		InvitedByUserProfile struct {
+			UserID   int    `json:"user_id"`
+			Name     string `json:"name"`
+			PhotoURL string `json:"photo_url"`
+			Username string `json:"username"`
+		} `json:"invited_by_user_profile"`
+		Clubs []interface{} `json:"clubs"`
+	} `json:"user_profile"`
+	Success bool `json:"success"`
 }

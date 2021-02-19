@@ -116,6 +116,96 @@ func RefreshToken(refreshToken string) (RefreshTokenResponse, error) {
 	return data, nil
 }
 
+// Follow is a user follow method
+func Follow(userID int) (FollowResponse, error) {
+	var data FollowResponse
+	response, err := http.Post(fmt.Sprintf("%s/follow", url), strings.NewReader(fmt.Sprintf(`{"source":9,"source_topic_id":null,"user_id":%d,"user_ids":null}`, userID)), headers)
+	if err != nil {
+		return data, err
+	}
+	if err := json.Unmarshal(response, &data); err != nil {
+		return data, err
+	}
+	return data, nil
+}
+
+// Unfollow is a user unfollow method
+func Unfollow(userID int) (UnfollowResponse, error) {
+	var data UnfollowResponse
+	response, err := http.Post(fmt.Sprintf("%s/unfollow", url), strings.NewReader(fmt.Sprintf(`{"user_id":%d}`, userID)), headers)
+	if err != nil {
+		return data, err
+	}
+	if err := json.Unmarshal(response, &data); err != nil {
+		return data, err
+	}
+	return data, nil
+}
+
+// GetFollowing is a get following method
+func GetFollowing(userID, pageSize, page int) (GetFollowingResponse, error) {
+	if pageSize == 0 {
+		pageSize = 400
+	}
+	if page == 0 {
+		page = 1
+	}
+	var data GetFollowingResponse
+	response, err := http.Post(fmt.Sprintf("%s/get_following?page_size=%d&page=%d", url, pageSize, page), strings.NewReader(fmt.Sprintf(`{"user_id":%d}`, userID)), headers)
+	if err != nil {
+		return data, err
+	}
+	if err := json.Unmarshal(response, &data); err != nil {
+		return data, err
+	}
+	return data, nil
+}
+
+// GetFollowers is a get followers method
+func GetFollowers(userID, pageSize, page int) (GetFollowersResponse, error) {
+	if pageSize == 0 {
+		pageSize = 400
+	}
+	if page == 0 {
+		page = 1
+	}
+	var data GetFollowersResponse
+	response, err := http.Post(fmt.Sprintf("%s/get_followers?page_size=%d&page=%d", url, pageSize, page), strings.NewReader(fmt.Sprintf(`{"user_id":%d}`, userID)), headers)
+	if err != nil {
+		return data, err
+	}
+	if err := json.Unmarshal(response, &data); err != nil {
+		return data, err
+	}
+	return data, nil
+}
+
+// GetProfileResponse is a get profile method
+func GetProfile(userID int) (GetProfileResponse, error) {
+	var data GetProfileResponse
+	response, err := http.Post(fmt.Sprintf("%s/get_profile", url), strings.NewReader(fmt.Sprintf(`{"user_id":%d}`, userID)), headers)
+	if err != nil {
+		return data, err
+	}
+	if err := json.Unmarshal(response, &data); err != nil {
+		return data, err
+	}
+	return data, nil
+}
+
+// AudienceReplyResponse is a raise hand method
+func AudienceReply(channel string, raiseHand bool) (AudienceReplyResponse, error) {
+	var data AudienceReplyResponse
+	response, err := http.Post(fmt.Sprintf("%s/audience_reply", url), strings.NewReader(fmt.Sprintf(`{"channel":"%s","raise_hands":%t,"unraise_hands":%t}`, channel, raiseHand, !raiseHand)), headers)
+	if err != nil {
+		return data, err
+	}
+	if err := json.Unmarshal(response, &data); err != nil {
+		return data, err
+	}
+	return data, nil
+}
+
 // AddCredentials is a method of adding credentials such as User ID or Access Token
 func AddCredentials(credentials map[string]string) {
 	for k, v := range credentials {
