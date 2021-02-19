@@ -203,8 +203,8 @@ type AudienceReplyResponse struct {
 	ErrorMessage string `json:"error_message"`
 }
 
-// FollowingResponse is the response structure of the Following method
-type FollowingResponse struct {
+// GetFollowingResponse is the response structure of the GetFollowing method
+type GetFollowingResponse struct {
 	Users []struct {
 		UserID   int         `json:"user_id"`
 		Name     string      `json:"name"`
@@ -236,8 +236,8 @@ type FollowingResponse struct {
 	Success  bool        `json:"success"`
 }
 
-// FollowerResponse is the response structure of the Follower method
-type FollowerResponse struct {
+// GetFollowersResponse is the response structure of the GetFollowers method
+type GetFollowersResponse struct {
 	Users []struct {
 		UserID            int         `json:"user_id"`
 		Name              string      `json:"name"`

@@ -180,7 +180,7 @@ func GetFollowers(userID, pageSize, page int) (GetFollowersResponse, error) {
 	return data, nil
 }
 
-// GetProfileResponse is a get profile method
+// GetProfile is a get profile method
 func GetProfile(userID int) (GetProfileResponse, error) {
 	var data GetProfileResponse
 	response, err := http.Post(fmt.Sprintf("%s/get_profile", url), strings.NewReader(fmt.Sprintf(`{"user_id":%d}`, userID)), headers)
@@ -193,7 +193,7 @@ func GetProfile(userID int) (GetProfileResponse, error) {
 	return data, nil
 }
 
-// AudienceReplyResponse is a raise hand method
+// AudienceReply is a raise hand method
 func AudienceReply(channel string, raiseHand bool) (AudienceReplyResponse, error) {
 	var data AudienceReplyResponse
 	response, err := http.Post(fmt.Sprintf("%s/audience_reply", url), strings.NewReader(fmt.Sprintf(`{"channel":"%s","raise_hands":%t,"unraise_hands":%t}`, channel, raiseHand, !raiseHand)), headers)
