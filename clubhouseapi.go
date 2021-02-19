@@ -206,6 +206,19 @@ func AudienceReply(channel string, raiseHand bool) (AudienceReplyResponse, error
 	return data, nil
 }
 
+// AcceptSpeakerInvite is an accept speaker invite method
+func AcceptSpeakerInvite(channel string, userID int) (AcceptSpeakerInviteResponse, error) {
+	var data AcceptSpeakerInviteResponse
+	response, err := http.Post(fmt.Sprintf("%s/accept_speaker_invite", url), strings.NewReader(fmt.Sprintf(`{"channel":"%s","user_id":%d}`, channel, userID)), headers)
+	if err != nil {
+		return data, err
+	}
+	if err := json.Unmarshal(response, &data); err != nil {
+		return data, err
+	}
+	return data, nil
+}
+
 // AddCredentials is a method of adding credentials such as User ID or Access Token
 func AddCredentials(credentials map[string]string) {
 	for k, v := range credentials {

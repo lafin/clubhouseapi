@@ -253,6 +253,16 @@ type GetFollowersResponse struct {
 	Success  bool        `json:"success"`
 }
 
+// AcceptSpeakerInviteResponse is the response structure of the AcceptSpeakerInvite method
+type AcceptSpeakerInviteResponse struct {
+	Token                   string      `json:"token"`
+	PubnubToken             string      `json:"pubnub_token"`
+	PubnubOrigin            interface{} `json:"pubnub_origin"`
+	PubnubHeartbeatValue    int         `json:"pubnub_heartbeat_value"`
+	PubnubHeartbeatInterval int         `json:"pubnub_heartbeat_interval"`
+	Success                 bool        `json:"success"`
+}
+
 // GetProfileResponse is the response structure of the GetProfile method
 type GetProfileResponse struct {
 	UserProfile struct {
