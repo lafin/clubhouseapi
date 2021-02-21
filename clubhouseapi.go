@@ -67,7 +67,7 @@ func GetChannels() (GetChannelsResponse, error) {
 // JoinChannel is a method to join a channel
 func JoinChannel(channel string) (JoinChannelResponse, error) {
 	var data JoinChannelResponse
-	response, err := http.Post(fmt.Sprintf("%s/join_channel", url), strings.NewReader(fmt.Sprintf(`{"channel":"%s"}`, channel)), headers)
+	response, err := http.Post(fmt.Sprintf("%s/join_channel", url), strings.NewReader(fmt.Sprintf(`{"channel":"%s","attribution_source":"feed","attribution_details":"eyJpc19leHBsb3JlIjpmYWxzZSwicmFuayI6MX0="}`, channel)), headers)
 	if err != nil {
 		return data, err
 	}
